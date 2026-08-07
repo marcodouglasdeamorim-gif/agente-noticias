@@ -1,0 +1,28 @@
+name: Executar Agente de Noticias
+
+on:
+  schedule:
+    # Executa todos os dias às 07:00 da manhã no horário de Brasília (10:00 UTC)
+    - cron: '0 10 * * *'
+  workflow_dispatch: # Permite executar manualmente para testar
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Instalar Dependências
+        run: pip install feedparser requests
+
+      - name: Executar Agente
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python agente_noticias.py
